@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Grocery Store</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #222;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .logo h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        header .cart button {
+            padding: 10px 20px;
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        header .cart button:hover {
+            background-color: #ff6600;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .products {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .product {
+            background-color: white;
+            padding: 20px;
+            margin: 10px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+        }
+
+        .product .price {
+            font-size: 1.2rem;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .product .discount {
+            font-size: 1rem;
+            color: #e60000;
+        }
+
+        .product button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .product button:hover {
+            background-color: #218838;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #222;
+            color: white;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <h1>Grocery Mart</h1>
+        </div>
+        <div class="cart">
+            <button onclick="viewCart()">View Cart ( <span id="cart-count">0</span> )</button>
+        </div>
+    </header>
+
+    <main>
+        <h2>Featured Kitchen Groceries</h2>
+
+        <div class="products">
+            <!-- Product 1 -->
+            <div class="product">
+                <img src="Accets\rice.jpg" alt="Rice">
+                <h3>Organic Rice</h3>
+                <p class="price">$5.99</p>
+                <p class="discount">Discount: 10% off</p>
+                <button onclick="addToCart('Organic Rice', 5.99, 'https://via.placeholder.com/200x200?text=Rice')">Add to Cart</button>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product">
+                <img src="Accets\tomatos.png" alt="Tomatoes">
+                <h3>Fresh Tomatoes</h3>
+                <p class="price">$2.49</p>
+                <p class="discount">Discount: 5% off</p>
+                <button onclick="addToCart('Fresh Tomatoes', 2.49, 'https://via.placeholder.com/200x200?text=Tomatoes')">Add to Cart</button>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product">
+                <img src="Accets\oliveOil.jpg" alt="Olive Oil">
+                <h3>Pure Olive Oil</h3>
+                <p class="price">$8.99</p>
+                <p class="discount">Discount: 15% off</p>
+                <button onclick="addToCart('Pure Olive Oil', 8.99, 'https://via.placeholder.com/200x200?text=Olive+Oil')">Add to Cart</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Grocery Mart - All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Initialize the cart from localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Function to add products to the cart
+        function addToCart(productName, price, imageUrl) {
+            const product = { name: productName, price: price, imageUrl: imageUrl, quantity: 1 };
+            cart.push(product);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        // Update cart item count
+        function updateCartCount() {
+            const cartCount = cart.length;
+            document.getElementById('cart-count').textContent = cartCount;
+        }
+
+        // View cart page
+        function viewCart() {
+            window.location.href = 'cart.html'; // Redirect to cart page
+        }
+
+        // Initialize cart count on page load
+        document.addEventListener('DOMContentLoaded', updateCartCount);
+    </script>
+</body>
+</html>

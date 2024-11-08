@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, content-fit=no">
+    <title>Settings - Kitchen Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Navbar Styles (Fixed Color) */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #333; /* Constant color for navbar */
+            padding: 1em;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar .logo img {
+            height: 50px;
+        }
+
+        .nav-links, .user-options {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links li {
+            list-style: none;
+            margin: 0 10px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .user-options a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Color Change Dropdown */
+        .color-options-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #444;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .color-options-dropdown button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            margin: 5px 0;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+
+        .color-options-dropdown button:hover {
+            background-color: #555;
+        }
+
+        .menu-btn {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        /* Content area - settings section */
+        .container {
+            margin-top: 80px;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .settings-wrapper h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .settings-option {
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-option label {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        .toggle-btn {
+            cursor: pointer;
+            width: 60px;
+            height: 30px;
+            border-radius: 30px;
+            background-color: #ccc;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-btn::before {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: left 0.3s;
+        }
+
+        .toggle-btn.active {
+            background-color: #4CAF50;
+        }
+
+        .toggle-btn.active::before {
+            left: 35px;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+
+        .container.dark-mode {
+            background-color: #333;
+            color: white;
+        }
+
+        .settings-option.dark-mode {
+            background-color: #444;
+            color: white;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+
+            .settings-option {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .toggle-btn {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="Accets\Logo.png" alt="Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#"><i class="fa-solid fa-house"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-utensils"></i></a></li>
+        </ul>
+        <div class="user-options">
+            <a href="../logged.html">Back</a>
+        </div>
+    </nav>
+
+    <!-- Color Change Menu Button -->
+    <button class="menu-btn" id="menuButton">Menu</button>
+    <div class="color-options-dropdown" id="dropdownMenu">
+        <button style="background-color: red;" data-color="red">Red</button>
+        <button style="background-color: purple;" data-color="purple">Purple</button>
+        <button style="background-color: yellow;" data-color="yellow">Yellow</button>
+        <button style="background-color: black;" data-color="black">Black</button>
+        <button style="background-color: white;" data-color="white">White</button>
+        <button style="background-color: blue;" data-color="blue">Blue</button>
+    </div>
+
+    <!-- Settings Wrapper -->
+    <div class="container" id="settingsContainer">
+        <div class="settings-wrapper">
+            <h2>Settings</h2>
+
+            <!-- Dark Mode Toggle -->
+            <div class="settings-option">
+                <label for="darkModeToggle">Dark Mode</label>
+                <div id="darkModeToggle" class="toggle-btn"></div>
+            </div>
+
+            <!-- Notifications Toggle -->
+            <div class="settings-option">
+                <label for="notificationsToggle">Notifications</label>
+                <div id="notificationsToggle" class="toggle-btn"></div>
+            </div>
+
+            <!-- Location Access Toggle -->
+            <div class="settings-option">
+                <label for="locationAccessToggle">Location Access</label>
+                <div id="locationAccessToggle" class="toggle-btn"></div>
+            </div>
+
+            <!-- User Plan Selection -->
+            <div class="settings-option">
+                <label>User Plan</label>
+                <div>
+                    <input type="radio" id="planMonthly" name="userPlan" value="Monthly" checked>
+                    <label for="planMonthly">Monthly</label>
+                </div>
+                <div>
+                    <input type="radio" id="planYearly" name="userPlan" value="Yearly">
+                    <label for="planYearly">Yearly</label>
+                </div>
+            </div>
+
+            <!-- Color Picker Option -->
+            <div class="settings-option">
+                <label for="colorPicker">Choose Background Color</label>
+                <div>
+                    <input type="color" id="colorPicker" name="color" value="#f9f9f9">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for Settings Functionality -->
+    <script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('.container').classList.toggle('dark-mode');
+            darkModeToggle.classList.toggle('active');
+
+            // Force the body background to dark mode when dark mode is activated
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.style.backgroundColor = '#121212';
+                document.querySelector('.container').style.backgroundColor = '#333';
+            } else {
+                // Reset to the previously selected color (or default to white)
+                document.body.style.backgroundColor = localStorage.getItem('backgroundColor') || '#fff';
+                document.querySelector('.container').style.backgroundColor = localStorage.getItem('backgroundColor') || '#f9f9f9';
+            }
+            saveSettings();
+        });
+
+        // Color Options Dropdown
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const menuButton = document.getElementById('menuButton');
+        menuButton.addEventListener('click', () => {
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Change color on button click
+        dropdownMenu.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const selectedColor = e.target.getAttribute('data-color');
+                document.body.style.backgroundColor = selectedColor;
+                document.querySelector('.container').style.backgroundColor = selectedColor;
+                saveSettings();
+            });
+        });
+
+        // Color Picker Change
+        const colorPicker = document.getElementById('colorPicker');
+        colorPicker.addEventListener('input', (e) => {
+            const selectedColor = e.target.value;
+            document.body.style.backgroundColor = selectedColor;
+            document.querySelector('.container').style.backgroundColor = selectedColor;
+            saveSettings();
+        });
+
+        // Save settings to localStorage
+        function saveSettings() {
+            const darkModeEnabled = darkModeToggle.classList.contains('active');
+            const notificationsEnabled = notificationsToggle.classList.contains('active');
+            const locationAccessEnabled = locationAccessToggle.classList.contains('active');
+            const userPlan = document.querySelector('input[name="userPlan"]:checked').value;
+            const bgColor = document.body.style.backgroundColor || '#fff';
+
+            // Store the settings in localStorage
+            localStorage.setItem('darkMode', darkModeEnabled);
+            localStorage.setItem('notificationsEnabled', notificationsEnabled);
+            localStorage.setItem('locationAccessEnabled', locationAccessEnabled);
+            localStorage.setItem('userPlan', userPlan);
+            localStorage.setItem('backgroundColor', bgColor);
+
+            console.log('Settings saved:', {
+                darkModeEnabled,
+                notificationsEnabled,
+                locationAccessEnabled,
+                userPlan,
+                backgroundColor: bgColor
+            });
+        }
+
+        // Load settings from localStorage on page load
+        function loadSettings() {
+            const darkModeEnabled = localStorage.getItem('darkMode') === 'true';
+            const notificationsEnabled = localStorage.getItem('notificationsEnabled') === 'true';
+            const locationAccessEnabled = localStorage.getItem('locationAccessEnabled') === 'true';
+            const userPlan = localStorage.getItem('userPlan') || 'Monthly';
+            const backgroundColor = localStorage.getItem('backgroundColor') || '#fff';
+
+            if (darkModeEnabled) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.container').classList.add('dark-mode');
+                darkModeToggle.classList.add('active');
+                document.body.style.backgroundColor = '#121212';
+                document.querySelector('.container').style.backgroundColor = '#333';
+            } else {
+                document.body.style.backgroundColor = backgroundColor;
+                document.querySelector('.container').style.backgroundColor = backgroundColor;
+            }
+
+            if (notificationsEnabled) {
+                notificationsToggle.classList.add('active');
+            }
+
+            if (locationAccessEnabled) {
+                locationAccessToggle.classList.add('active');
+            }
+
+            // Set the user plan radio button based on saved setting
+            document.querySelector(`input[name="userPlan"][value="${userPlan}"]`).checked = true;
+        }
+
+        // Initialize settings when the page loads
+        loadSettings();
+    </script>
+</body>
+</html>

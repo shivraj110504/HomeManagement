@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSpeed Login</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="module">
+        // Firebase SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDME1QWI5pIAJdzuYm8H2B392T-9yT4xdw",
+            authDomain: "medispeed-c8644.firebaseapp.com",
+            projectId: "medispeed-c8644",
+            storageBucket: "medispeed-c8644.appspot.com",
+            messagingSenderId: "167770942575",
+            appId: "1:167770942575:web:8ef473f51348e495ce319a",
+            measurementId: "G-Y5Q726DWBG"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        //----- Login code start
+        document.getElementById("login").addEventListener("click", function() {
+            var email = document.getElementById("login_email").value;
+            var password = document.getElementById("login_password").value;
+            var plan = document.getElementById("plan").value; // Get selected plan
+
+            if (!plan) {
+                alert("Please select a plan.");
+                return;
+            }
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log(user);
+                    alert(user.email + " Login successfully!!!");
+
+                    // Store user data in Firestore with the selected plan
+                    storeUserData(user, plan);
+
+                    // Show logout option
+                    document.getElementById('logout').style.display = 'block';
+
+                    // Redirect to logged-in page (or any other page)
+                    window.location.href = 'logged.html';  // Adjust this URL as needed
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    console.log(errorMessage);
+                    alert(errorMessage);
+                });
+        });
+        //----- End
+
+        //----- Logout code start
+        document.getElementById("logout").addEventListener("click", function() {
+            signOut(auth).then(() => {
+                console.log('Sign-out successful.');
+                alert('Sign-out successful.');
+                document.getElementById('logout').style.display = 'none';
+                window.location.href = 'index.html'; // Redirect to home page after logout
+            }).catch((error) => {
+                console.log('An error happened during sign-out.', error);
+            });
+        });
+        //----- End
+
+        // Function to store user data in Firestore
+        function storeUserData(user, plan) {
+            // Create a document reference using the user's unique UID
+            const userRef = doc(db, "users", user.uid);
+
+            // Set user data in the Firestore document
+            setDoc(userRef, {
+                email: user.email,
+                plan: plan,  // Store the selected plan
+                lastLogin: new Date()
+            }).then(() => {
+                console.log("User data stored successfully in Firestore!");
+            }).catch((error) => {
+                console.error("Error storing user data: ", error);
+            });
+        }
+    </script>
+</head>
+<body style="background-color: #6dd5ad; align-items: center; justify-content: center;">
+
+    <div class="navbar navbar-default" style="background-color: #6dd5ad;">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#" style="color: black;">MediSpeed</a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" id="logout" style="display: none;">Log Out</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="container" style="height: 400px; width: 50%;">
+        <form name="login_form" id="login_form" method="post" style="align-items: center; justify-content: center;" action="#" enctype="multipart/form-data">
+            <div class="col-sm-4" style="width: 100%;">
+                <h2>Log in Form</h2>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" name="login_email" id="login_email" style="width: 100%;" class="form-control" placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="login_password" style="width: 100%;" id="login_password" class="form-control" placeholder="Enter your password">
+                </div>
+
+                <!-- Dropdown to select plan -->
+                <div class="form-group">
+                    <label for="plan">Choose Plan</label>
+                    <select name="plan" id="plan" class="form-control">
+                        <option value="">Select a Plan</option>
+                        <option value="2_weeks">2 Weeks</option>
+                        <option value="1_month">1 Month</option>
+                        <option value="6_months">6 Months</option>
+                        <option value="1_year">1 Year</option>
+                    </select>
+                </div>
+
+                <p>Don't have an account? <a href="Registration.html" style="font-weight: 600; color: blue;">Sign Up</a></p>
+                <button type="button" id="login" name="login" class="btn btn-success" style="background-color: rgb(255, 94, 0); width: 83%; align-items: center; justify-content: center;">Login</button>
+                <a href="index.html"><button type="button" id="register" name="register" class="btn btn-success" style="background-color: rgb(63, 43, 213); width: 16%; justify-content: space-between;">Back</button></a>
+            </div><!-- end col -->
+        </form>
+    </div><!--  end container -->
+    <br>
+</body>
+</html>

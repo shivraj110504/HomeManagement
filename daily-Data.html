@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #333;
+            padding: 1em;
+        }
+
+        .navbar .logo img {
+            height: 50px;
+        }
+
+        .nav-links, .user-options {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links li {
+            list-style: none;
+            margin: 0 10px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .wrapper {
+            margin-top: 20px;
+            text-align: left;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .inputbox .inputfield {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .inputbox input {
+            width: 100%;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .inputfield i {
+            font-size: 20px;
+            color: #666;
+        }
+
+        .button {
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+
+        .container.dark-mode {
+            background-color: #333;
+            color: white;
+        }
+
+        .wrapper.dark-mode {
+            background-color: #444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="Accets/Logo.png" alt="Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#"><i class="fa-solid fa-house"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-utensils"></i></a></li>
+        </ul>
+        <div class="user-options">
+            <a href="../logged.html">Back</a>
+        </div>
+    </nav>
+
+    <!-- Form Wrapper -->
+    <div class="wrapper">
+        <form id="dailyDataForm">
+            <h1>Daily Grocery Usage</h1>
+            <div class="inputbox">
+                <div class="inputfield">
+                    <input type="text" placeholder="Item Name" id="itemName" required>
+                    <i class='bx bxs-food-menu'></i>
+                </div>
+                <div class="inputfield">
+                    <input type="number" placeholder="Amount Used" id="amountUsed" required>
+                    <i class='bx bx-cart'></i>
+                </div>
+                <div class="inputfield">
+                    <input type="text" placeholder="Unit (e.g., ml, lb)" id="unit" required>
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+            </div>
+            <button type="submit" class="button">Save Data</button>
+        </form>
+    </div>
+
+    <!-- Firebase and Form Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDME1QWI5pIAJdzuYm8H2B392T-9yT4xdw",
+            authDomain: "medispeed-c8644.firebaseapp.com",
+            databaseURL: "https://medispeed-c8644-default-rtdb.firebaseio.com",
+            projectId: "medispeed-c8644",
+            storageBucket: "medispeed-c8644.appspot.com",
+            messagingSenderId: "167770942575",
+            appId: "1:167770942575:web:8ef473f51348e495ce319a",
+            measurementId: "G-Y5Q726DWBG"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Form submission handling
+        document.getElementById("dailyDataForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const itemName = document.getElementById("itemName").value;
+            const amountUsed = document.getElementById("amountUsed").value;
+            const unit = document.getElementById("unit").value;
+
+            set(ref(db, 'Grocery Usage/' + itemName), {
+                itemName: itemName,
+                amountUsed: amountUsed,
+                unit: unit
+            }).then(() => {
+                alert("Data saved successfully!");
+            }).catch((error) => {
+                console.error("Error saving data:", error);
+            });
+        });
+
+        // Load settings from localStorage
+        function loadSettings() {
+            const darkModeEnabled = localStorage.getItem('darkMode') === 'true';
+            const backgroundColor = localStorage.getItem('backgroundColor') || '#fff';
+
+            if (darkModeEnabled) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.container').classList.add('dark-mode');
+                document.querySelector('.wrapper').classList.add('dark-mode');
+                document.body.style.backgroundColor = '#121212';
+                document.querySelector('.container').style.backgroundColor = '#333';
+                document.querySelector('.wrapper').style.backgroundColor = '#444';
+            } else {
+                document.body.style.backgroundColor = backgroundColor;
+                document.querySelector('.container').style.backgroundColor = backgroundColor;
+                document.querySelector('.wrapper').style.backgroundColor = backgroundColor;
+            }
+        }
+
+        // Load settings when page is loaded
+        loadSettings();
+    </script>
+</body>
+</html>

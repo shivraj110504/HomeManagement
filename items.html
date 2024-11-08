@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, content-fit=no">
+    <title>Items Left - Kitchen Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #333;
+            padding: 1em;
+        }
+
+        .navbar .logo img {
+            height: 50px;
+        }
+
+        .nav-links, .user-options {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links li {
+            list-style: none;
+            margin: 0 10px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .wrapper {
+            margin-top: 20px;
+            text-align: left;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .item-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .item-list li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .item-list li:last-child {
+            border-bottom: none;
+        }
+
+        .countdown {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+
+        .container.dark-mode {
+            background-color: #333;
+            color: white;
+        }
+
+        .wrapper.dark-mode {
+            background-color: #444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="Accets/Logo.png" alt="Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#"><i class="fa-solid fa-house"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-utensils"></i></a></li>
+        </ul>
+        <div class="user-options">
+            <a href="../logged.html">Back</a>
+        </div>
+    </nav>
+
+    <!-- Items Left Wrapper -->
+    <div class="wrapper">
+        <h1>Items Left</h1>
+        <ul id="itemsList" class="item-list"></ul>
+        <div id="countdown" class="countdown"></div>
+    </div>
+
+    <!-- Firebase and Data Retrieval Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDME1QWI5pIAJdzuYm8H2B392T-9yT4xdw",
+            authDomain: "medispeed-c8644.firebaseapp.com",
+            databaseURL: "https://medispeed-c8644-default-rtdb.firebaseio.com",
+            projectId: "medispeed-c8644",
+            storageBucket: "medispeed-c8644.appspot.com",
+            messagingSenderId: "167770942575",
+            appId: "1:167770942575:web:8ef473f51348e495ce319a",
+            measurementId: "G-Y5Q726DWBG"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Fetch and display grocery usage
+        function fetchItemsLeft() {
+            const itemsList = document.getElementById("itemsList");
+            const countdownDisplay = document.getElementById("countdown");
+            itemsList.innerHTML = ""; // Clear previous items
+            countdownDisplay.innerHTML = ""; // Clear previous countdown
+
+            const groceryUsageRef = ref(db, 'Grocery Usage'); // Adjust the reference to your data structure
+
+            get(groceryUsageRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const groceryUsage = snapshot.val();
+                    const items = Object.keys(groceryUsage);
+                    let totalRemainingTime = 0; // Total remaining time in seconds
+
+                    items.forEach((item) => {
+                        const { amountUsed, itemName, unit } = groceryUsage[item]; // Destructure to get data
+                        const dailyUsage = prompt(`Enter daily usage for ${itemName} (${unit}):`, "0"); // Prompt user for daily usage
+
+                        if (dailyUsage !== null) { // Ensure user didn't cancel the prompt
+                            const dailyUsageAmount = parseInt(dailyUsage);
+                            displayItem(itemsList, itemName, amountUsed, unit); // Display item using itemName
+
+                            // Calculate remaining time based on the daily usage
+                            const remaining = parseInt(amountUsed); // Convert amountUsed to an integer
+                            if (remaining > 0 && dailyUsageAmount > 0) {
+                                const remainingDays = Math.floor(remaining / dailyUsageAmount);
+                                const remainingHours = Math.floor(((remaining % dailyUsageAmount) / dailyUsageAmount) * 24);
+                                const remainingTimeInSeconds = remainingDays * 86400 + remainingHours * 3600; // Total seconds
+                                totalRemainingTime += remainingTimeInSeconds; // Add to total remaining time
+                            }
+                        }
+                    });
+
+                    // Start countdown timer
+                    startCountdown(totalRemainingTime);
+                } else {
+                    itemsList.innerHTML = "<li>No items found in stock.</li>";
+                }
+            }).catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+        }
+
+        function displayItem(container, itemName, amountUsed, unit) {
+            const itemElement = document.createElement("li");
+            itemElement.textContent = `${itemName}: ${amountUsed} ${unit} remaining`;
+            container.appendChild(itemElement);
+        }
+
+        function startCountdown(totalSeconds) {
+            const countdownDisplay = document.getElementById("countdown");
+            let secondsRemaining = totalSeconds;
+
+            const interval = setInterval(() => {
+                if (secondsRemaining <= 0) {
+                    clearInterval(interval);
+                    countdownDisplay.innerHTML = "Items have run out!";
+                    return;
+                }
+
+                const days = Math.floor(secondsRemaining / (3600 * 24));
+                const hours = Math.floor((secondsRemaining % (3600 * 24)) / 3600);
+                const minutes = Math.floor((secondsRemaining % 3600) / 60);
+                const seconds = secondsRemaining % 60;
+
+                countdownDisplay.innerHTML = `Time left to items run out: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+                secondsRemaining--;
+            }, 1000);
+        }
+
+        fetchItemsLeft(); // Initial fetch on page load
+
+        // Load settings from localStorage
+        function loadSettings() {
+            const darkModeEnabled = localStorage.getItem('darkMode') === 'true';
+            const backgroundColor = localStorage.getItem('backgroundColor') || '#fff';
+
+            if (darkModeEnabled) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.container').classList.add('dark-mode');
+                document.querySelector('.wrapper').classList.add('dark-mode');
+                document.body.style.backgroundColor = '#121212';
+                document.querySelector('.container').style.backgroundColor = '#333';
+                document.querySelector('.wrapper').style.backgroundColor = '#444';
+            } else {
+                document.body.style.backgroundColor = backgroundColor;
+                document.querySelector('.container').style.backgroundColor = backgroundColor;
+                document.querySelector('.wrapper').style.backgroundColor = backgroundColor;
+            }
+        }
+
+        // Load settings when page is loaded
+        loadSettings();
+    </script>
+</body>
+</html>
