@@ -15,6 +15,7 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f3f3f3;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* Navbar */
@@ -25,6 +26,10 @@
             padding: 1rem;
             background-color: #4caf50;
             color: white;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
 
         .logo {
@@ -32,7 +37,6 @@
             font-weight: bold;
         }
 
-        /* Search Bar with Icon */
         .search-container {
             position: relative;
             width: 50%;
@@ -146,6 +150,74 @@
         .categories button:hover {
             background-color: #ccc;
         }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+
+        .navbar.dark-mode {
+            background-color: #333;
+        }
+
+        .buttons button.dark-mode {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .buttons button.dark-mode:hover {
+            background-color: #45a049;
+        }
+
+        .nav-links a.dark-mode {
+            color: white;
+        }
+
+        /* User Info Dropdown */
+        .user-options {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .user-options #user-name {
+            font-size: 18px;
+            cursor: pointer;
+            color: white;
+            margin: 0;
+        }
+
+        .user-options #user-name:hover {
+            color: #ccc;
+        }
+
+        .user-options .dropdown {
+            display: none;
+            position: absolute;
+            top: 50px; /* Adjusted to be below the username */
+            background-color: #333;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-options .dropdown a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 8px 10px;
+            border-bottom: 1px solid #444;
+        }
+
+        .user-options .dropdown a:last-child {
+            border-bottom: none;
+        }
+
+        .user-options .dropdown a:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
@@ -163,17 +235,24 @@
                 <button>Select Location</button>
                 <button onclick="navigateToPage('login.html')">Login / Sign Up</button>
                 <button onclick="navigateToPage('cart.html')">Cart</button>
-               
+                <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+            </div>
+            <div class="user-options">
+                <span id="user-name" style="display: none;"></span>
+                <div class="dropdown" id="dropdown-menu">
+                    <a href="settings.html">Settings</a>
+                    <a href="javascript:void(0);" id="logout">Log Out</a>
+                </div>
             </div>
         </div>
         <div class="nav-links">
-            <a href="login.html">Shop by Category</a>
-            <a href="login.html">Exotic Fruits & Vegetables</a>
-            <a href="login.html">Tea</a>
-            <a href="login.html">Ghee</a>
-            <a href="login.html">Nandini</a>
-            <a href="login.html">Fresh Vegetables</a>
-            <a href="login.html">Offers</a>
+            <a href="#">Shop by Category</a>
+            <a href="#">Exotic Fruits & Vegetables</a>
+            <a href="#">Tea</a>
+            <a href="#">Ghee</a>
+            <a href="#">Nandini</a>
+            <a href="#">Fresh Vegetables</a>
+            <a href="#">Offers</a>
         </div>
     </header>
 
@@ -184,15 +263,7 @@
         <img src="HeroImg/offer.png" alt="Slide 3">
     </section>
 
-    <div class="categories">
-        <button>EGGS, MEAT AND FISH</button>
-        <button>NEUPASS</button>
-        <button>AYURVEDA</button>
-        <button>BUY MORE SAVE MORE</button>
-        <button>DEALS OF THE WEEK</button>
-        <button>COMBO STORE</button>
-    </div>
-
+    <!-- JavaScript for the slideshow -->
     <script>
         // JavaScript for the slideshow with fade transition
         let currentSlide = 0;
@@ -213,15 +284,71 @@
             showSlide(currentSlide);
         }
         window.navigateToPage = function(page) {
-      if (page === "login.html") {
-        window.location.href = "login.html";  // Redirects to items.html
-      } else if (page === "cart.html") {
-        window.location.href = "cart.html";
-      
-      }
-    };
+            if (page === "login.html") {
+                window.location.href = "login.html";  // Redirects to login.html
+            } else if (page === "cart.html") {
+                window.location.href = "cart.html";
+            }
+        };
 
         setInterval(nextSlide, 3000); // Change image every 3 seconds
+    </script>
+
+    <!-- Firebase Authentication Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDME1QWI5pIAJdzuYm8H2B392T-9yT4xdw",
+            authDomain: "medispeed-c8644.firebaseapp.com",
+            projectId: "medispeed-c8644",
+            storageBucket: "medispeed-c8644.appspot.com",
+            messagingSenderId: "167770942575",
+            appId: "1:167770942575:web:8ef473f51348e495ce319a",
+            measurementId: "G-Y5Q726DWBG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Display user name and dropdown options
+                document.getElementById("user-name").style.display = "inline";
+                document.getElementById("user-name").textContent = `Hello, ${user.displayName || user.email}`;
+            } else {
+                document.getElementById("user-name").style.display = "none";
+            }
+        });
+
+        // Toggle dropdown menu
+        document.getElementById("user-name").addEventListener("click", () => {
+            const dropdown = document.getElementById("dropdown-menu");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        });
+
+        // Log out the user
+        document.getElementById("logout").addEventListener("click", () => {
+            signOut(auth).then(() => {
+                console.log('User signed out');
+                window.location.href = 'index.html'; // Redirect to login page
+            }).catch((error) => {
+                console.error("Error signing out:", error);
+            });
+        });
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Set dark mode on load if saved in localStorage
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
     </script>
 </body>
 </html>

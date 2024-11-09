@@ -14,6 +14,7 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
+    /* Navbar */
     .navbar {
       display: flex;
       justify-content: space-between;
@@ -47,7 +48,6 @@
       font-size: 18px;
     }
 
-    /* Center user options in the navbar */
     .user-options {
       display: flex;
       align-items: center;
@@ -70,7 +70,7 @@
     .user-options .dropdown {
       display: none;
       position: absolute;
-      top: 50px; /* Adjusted to be below the username */
+      top: 50px;
       background-color: #333;
       border-radius: 5px;
       padding: 10px;
@@ -93,7 +93,36 @@
       background-color: #555;
     }
 
-    /* Content area */
+    /* Hero Section with Slideshow */
+    .hero {
+      position: relative;
+      width: 75%; /* Set width to 75% of the page */
+      max-width: 1912px; /* Ensure max width of original image dimensions */
+      aspect-ratio: 1912 / 551; /* Maintain aspect ratio */
+      height: auto;
+      overflow: hidden;
+      margin: 120px auto 0; /* Adjust margin to make room for the navbar */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .hero img.active {
+      opacity: 1;
+    }
+
+    /* Content Section */
     .container {
       width: 80%;
       margin: 100px auto 0;
@@ -115,10 +144,6 @@
       background-color: #45a049;
     }
 
-    #content {
-      margin-top: 20px;
-    }
-
     /* Dark Mode Styles */
     body.dark-mode {
       background-color: #121212;
@@ -138,30 +163,72 @@
     nav button.dark-mode:hover {
       background-color: #45a049;
     }
+
+    .nav-link {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      height: auto;
+      width: auto;
+      padding: 1rem;
+      background-color: #eef;
+      position: relative;
+      z-index: 1;  /* Ensure it's above other content */
+      margin-top: 80px;  /* Create space below the fixed navbar */
+    }
+
+    .nav-link a {
+      color: #4caf50;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+    }
+
+    .nav-link a:hover {
+      color: #333;
+    }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="logo">
-      <img src="Accets/Logo.png" alt="Logo">
+  <header>
+    <!-- Navbar -->
+      <nav class="navbar">
+        <div class="logo">
+          <img src="Accets/Logo.png" alt="Logo">
+        </div>
+        <ul class="nav-links">
+          <li><a href="daily-Data.html">Daily Data</a></li>
+          <li><a href="items.html">Items Left</a></li>
+          <li><a href="orderOnline.html">Order Online</a></li>
+        </ul>
+        <div class="user-options">
+          <span id="user-name" style="display: none;"></span>
+          <div class="dropdown" id="dropdown-menu">
+            <a href="settings.html">Settings</a>
+            <a href="javascript:void(0);" id="logout">Log Out</a>
+          </div>
+        </div>
+      </nav>
+    
+      <div class="nav-link">
+        <a href="notice.html">Shop by Category</a>
+        <a href="notice.html">Exotic Fruits & Vegetables</a>
+        <a href="notice.html">Tea</a>
+        <a href="notice.html">Ghee</a>
+        <a href="notice.html">Nandini</a>
+        <a href="notice.html">Fresh Vegetables</a>
+        <a href="notice.html">Offers</a>
     </div>
-    <ul class="nav-links">
-      <li><a href="daily-Data.html">Daily Data</a></li>
-      <li><a href="items.html">Items Left</a></li>
-      <li><a href="orderOnline.html">Order Online</a></li>
-    </ul>
-    <div class="user-options">
-      <!-- The user name will be displayed here after login -->
-      <span id="user-name" style="display: none;"></span>
-      <div class="dropdown" id="dropdown-menu">
-        <a href="settings.html">Settings</a>
-        <a href="javascript:void(0);" id="logout">Log Out</a>
-      </div>
-    </div>
-  </nav>
+  </header>
+  
 
-  <!-- Main Content -->
+  <!-- Hero Section with Slideshow -->
+  <section class="hero">
+    <img src="HeroImg/Home.png" alt="Slide 1" class="active">
+    <img src="HeroImg/RedLabel.png" alt="Slide 2">
+    <img src="HeroImg/offer.png" alt="Slide 3">
+  </section>
+
+  <!-- Kitchen Tracker Section -->
   <div class="container">
     <h1>Welcome to Kitchen Tracker</h1>
     <nav>
@@ -172,6 +239,38 @@
     </nav>
     <div id="content"></div>
   </div>
+
+  <!-- Footer -->
+<footer style="background-color:#333; color:#fff; padding: 20px 0; text-align:center;">
+  <div class="container">
+    <!-- Company Info -->
+    <div style="margin-bottom: 20px;">
+      <h4 style="margin: 0;">Grocery Grow</h4>
+      <p style="margin: 5px 0;">YOrganize, Plan, and Shop – The Easy Way!</p>
+    </div>
+
+    <!-- Links -->
+    <div style="margin-bottom: 20px;">
+      <a href="#" style="color:#fff; text-decoration:none; margin: 0 15px;">Home</a>
+      <a href="#" style="color:#fff; text-decoration:none; margin: 0 15px;">About Us</a>
+      <a href="#" style="color:#fff; text-decoration:none; margin: 0 15px;">Services</a>
+      <a href="#" style="color:#fff; text-decoration:none; margin: 0 15px;">Contact</a>
+    </div>
+
+    <!-- Social Media Icons -->
+    <div>
+      <a href="#" style="color:#fff; margin: 0 10px;">Facebook</a>
+      <a href="#" style="color:#fff; margin: 0 10px;">Twitter</a>
+      <a href="#" style="color:#fff; margin: 0 10px;">Instagram</a>
+      <a href="#" style="color:#fff; margin: 0 10px;">LinkedIn</a>
+    </div>
+
+    <!-- Copyright -->
+    <div style="margin-top: 20px; font-size: 14px;">
+      <p>&copy; 2024 Grocery Grow. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
@@ -193,11 +292,9 @@
     // Listen for authentication state changes
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // If user is logged in, display their name and show logout button
         document.getElementById("user-name").style.display = "inline";
         document.getElementById("user-name").textContent = `Hello, ${user.displayName || user.email}`;
       } else {
-        // If user is not logged in, hide user info and logout button
         document.getElementById("user-name").style.display = "none";
       }
     });
@@ -208,7 +305,7 @@
       dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
     });
 
-    // Function to log out the user
+    // Log out functionality
     document.getElementById("logout").addEventListener("click", () => {
       signOut(auth).then(() => {
         console.log('User signed out');
@@ -218,38 +315,31 @@
       });
     });
 
+     // JavaScript for the slideshow with fade transition
+     let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero img');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }
+
+        setInterval(nextSlide, 3000); // Change image every 3 seconds
+
     // Function to navigate to pages (e.g., Daily Data, Items Left, etc.)
     window.navigateToPage = function(page) {
-      if (page === "items.html") {
-        window.location.href = "items.html";  // Redirects to items.html
-      } else if (page === "daily-Data.html") {
-        window.location.href = "daily-Data.html";
-      } else if (page === "settings.html") {
-        window.location.href = "settings.html";
-      } else if (page === "OrderOnline.html") {
-        window.location.href = "OrderOnline.html";
-      }
+      window.location.href = page;
     };
-
-    // Load user info and settings (dark mode and background color)
-    function loadSettings() {
-      const darkModeEnabled = localStorage.getItem('darkMode') === 'true';
-      const backgroundColor = localStorage.getItem('backgroundColor') || '#f9f9f9';
-
-      if (darkModeEnabled) {
-        document.body.classList.add('dark-mode');
-        document.querySelector('.container').classList.add('dark-mode');
-        document.querySelectorAll('nav button').forEach(button => button.classList.add('dark-mode'));
-        document.body.style.backgroundColor = '#121212';
-        document.querySelector('.container').style.backgroundColor = '#333';
-      } else {
-        document.body.style.backgroundColor = backgroundColor;
-        document.querySelector('.container').style.backgroundColor = backgroundColor;
-      }
-    }
-
-    // Load settings when page is loaded
-    loadSettings();
   </script>
 </body>
 </html>
